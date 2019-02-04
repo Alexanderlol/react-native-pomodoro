@@ -2,13 +2,22 @@ import React from 'react'
 import {StyleSheet, Text, Button, View} from 'react-native'
 import PropTypes from 'prop-types'
 
-const MAX_SECONDS = 10;
+const MAX_SECONDS = 1500
+
+// try putting these in render() and referencing the in the DOM
+var minutes = Math.floor(MAX_SECONDS / 60)
+var seconds = MAX_SECONDS - minutes * 60 
+//
+
+// OUTSIDE THE CLASS DEFINITON, THIS STUFF HAPPENS ONCE
+
 class Count extends React.Component {
   constructor() {
+    // constructor stuff only happens once
     super()
     this.state = {
       count: MAX_SECONDS,
-      isCountingDown: false
+      isCountingDown: false,
     }
     this.interval = null
 
@@ -17,18 +26,6 @@ class Count extends React.Component {
     this.stopCounter = this.stopCounter.bind(this)
     this.resetCounter = this.resetCounter.bind(this)
     this.decrementCount = this.decrementCount.bind(this)
-  }
-    
-  componentDidMount () {
-    this.resetCounter()
-    this.startCounter()
-  }
-
-  resetCounter () {
-    this.stopCounter()
-    this.setState({ 
-      count: MAX_SECONDS
-    })
   }
 
   startCounter () {
@@ -41,6 +38,13 @@ class Count extends React.Component {
     if(this.state.count <= 0) {
       this.resetCounter()
     }
+  }
+
+  resetCounter () {
+    this.stopCounter()
+    this.setState({ 
+      count: MAX_SECONDS
+    })
   }
 
   stopCounter () {
@@ -58,14 +62,18 @@ class Count extends React.Component {
       this.stopCounter()
     }
   }
-    
+
+  // anything in RENDER happens everytime render is called which is EVERY time setState() is called
+  // Math.floor(this.state.count / 60) is a computation that needs to happen every second. 
+  // set state is being called every second for us.
   render() {
+    
     return (
       <View>
         <Button onPress={this.startCounter} title="Start"/>
         <Button onPress={this.stopCounter} title="Stop"/>
         <Button onPress={this.resetCounter} title="Reset"/>
-        <Text>{this.state.count}</Text>
+        <Text>{`${Math.floor(this.state.count / 60)} : ${this.state.count % 60}`}</Text>
       </View>
     )
   }
