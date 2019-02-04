@@ -7,7 +7,8 @@ class Count extends React.Component {
   constructor() {
     super()
     this.state = {
-      count: MAX_SECONDS
+      count: MAX_SECONDS,
+      isCountingDown: false
     }
     this.interval = null
 
@@ -24,15 +25,31 @@ class Count extends React.Component {
   }
 
   resetCounter () {
-    this.setState({ count: MAX_SECONDS })
+    this.stopCounter()
+    this.setState({ 
+      count: MAX_SECONDS
+    })
   }
 
   startCounter () {
-    this.interval = setInterval(this.decrementCount, 1000)
+    if(this.state.isCountingDown === true) {
+      console.log('already decrementing')
+    } else {
+      this.interval = setInterval(this.decrementCount, 1000)
+      this.setState({isCountingDown: true})
+    }
+    if(this.state.count <= 0) {
+      this.resetCounter()
+    }
   }
 
   stopCounter () {
-    clearInterval(this.interval)
+    if(this.interval){
+      clearInterval(this.interval)
+      this.setState({isCountingDown: false})
+    } else {
+      console.log('no interval to clear')
+    }
   }
 
   decrementCount () {
