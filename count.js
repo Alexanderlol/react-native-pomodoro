@@ -1,6 +1,5 @@
 import React from 'react'
-import {StyleSheet, Text, Button, View, Vibration} from 'react-native'
-import PropTypes from 'prop-types'
+import {StyleSheet, Text, Button, View, TouchableHighlight} from 'react-native'
 
 const MAX_SECONDS = 3
 const REST_SECONDS = 5
@@ -33,12 +32,16 @@ class Count extends React.Component {
       this.interval = setInterval(this.decrementCount, 1000)
       this.setState({isCountingDown: true, status: 'working'}) 
     }
-    if(this.state.count <= 0 && this.state.breakCount > 0) {
-      clearInterval(this.interval)
-      this.startBreakCounter()
-    }
-    if(this.state.count <= 0 && this.state.breakCount <= 0) {
-      this.resetCounter()
+    if(this.state.isCountingDown) {
+      console.log('already decrementing')
+    } else {
+      if(this.state.count <= 0 && this.state.breakCount > 0) {
+        clearInterval(this.interval)
+        this.startBreakCounter()
+      }
+      if(this.state.count <= 0 && this.state.breakCount <= 0) {
+        this.resetCounter()
+      }
     }
   }
 
@@ -110,20 +113,71 @@ class Count extends React.Component {
 
     return (
       <View>
-        <Text>Pomodoro Timer</Text>
-        <Text>
+        <Text style={styles.headerText}>Pomodoro Timer</Text>
+        <Text style={styles.statusText}>
         {
           statusMessage()
         }
         </Text> 
-        <Button onPress={this.startCounter} title="Start"/>
-        <Button onPress={this.stopCounter} title="Stop"/>
-        <Button onPress={this.resetCounter} title="Reset"/>
-        <Text>{`${minutes < 10 ? ('0' + minutes.toString()) : minutes} : ${seconds < 10 ? ('0' + seconds.toString()) : seconds }`}</Text>
-        <Text>{`${restMinutes < 10 ? ('0' + restMinutes.toString()) : restMinutes} : ${restSeconds < 10 ? ('0' + restSeconds.toString()) : restSeconds }`}</Text>
+        <TouchableHighlight style={styles.buttonStyle}>
+          <Button color="white" onPress={this.startCounter} title="Start"/>
+        </TouchableHighlight> 
+        <TouchableHighlight style={styles.buttonStyle}>
+          <Button color="white" onPress={this.stopCounter} title="Stop"/>
+        </TouchableHighlight> 
+        <TouchableHighlight style={styles.buttonStyle}>
+          <Button color="white" fontWeight="bold" onPress={this.resetCounter} title="Reset"/>
+        </TouchableHighlight> 
+        <Text style={styles.timerStyle}>{`${minutes < 10 ? ('0' + minutes.toString()) : minutes} : ${seconds < 10 ? ('0' + seconds.toString()) : seconds }`}</Text>
+        <Text style={styles.timerStyle}>{`${restMinutes < 10 ? ('0' + restMinutes.toString()) : restMinutes} : ${restSeconds < 10 ? ('0' + restSeconds.toString()) : restSeconds }`}</Text>
       </View>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonStyle: {
+    height: 40,
+    width: 160,
+    borderRadius: 10,
+    backgroundColor: "black",
+    marginLeft: 70,
+    marginRight: 50,
+    marginTop: 20,
+  },
+  headerText: {
+    fontSize: 40,
+    marginBottom: 20,
+    color: "black",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  statusText: {
+    fontSize: 20,
+    marginBottom: 10,
+    marginRight: 10,
+    color: "red",
+    fontWeight: 'bold',
+    textAlign: "center"
+  },
+  timerStyle: {
+    height: 60,
+    width: 200,
+    borderRadius: 10,
+    backgroundColor: "black",
+    color: "white",
+    marginLeft: 50,
+    marginRight: 50,
+    marginTop: 30,
+    textAlign: "center",
+    fontSize: 50
+  }
+});
 
 export default Count
