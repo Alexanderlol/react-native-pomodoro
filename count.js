@@ -1,8 +1,8 @@
 import React from 'react'
-import {StyleSheet, Text, Button, View, TouchableHighlight} from 'react-native'
+import {StyleSheet, Text, Button, View, TouchableHighlight, Vibration} from 'react-native'
 
-const MAX_SECONDS = 3
-const REST_SECONDS = 5
+const MAX_SECONDS = 1500 //25min
+const REST_SECONDS = 300 //5min
 const DURATION = 1000
 
 class Count extends React.Component {
@@ -10,8 +10,8 @@ class Count extends React.Component {
     // constructor stuff only happens once
     super()
     this.state = {
-      count: MAX_SECONDS, // probly could find better name then count
-      breakCount: REST_SECONDS, // probly could find better name then breakCount
+      count: MAX_SECONDS, 
+      breakCount: REST_SECONDS,
       isCountingDown: false,
     }
     this.interval = null
@@ -26,16 +26,16 @@ class Count extends React.Component {
   }
 
   startCounter () {
-    if(this.state.isCountingDown) { 
+    if(this.state.isCountingDown) { //prevent startcounter from running again while decrementing
       console.log('already decrementing')
     } else {
-      this.interval = setInterval(this.decrementCount, 1000)
+      this.interval = setInterval(this.decrementCount, 1000) //decrement every second
       this.setState({isCountingDown: true, status: 'working'}) 
     }
-    if(this.state.isCountingDown) {
+    if(this.state.isCountingDown) { //prevent startbreakcounter from running again while decrementing
       console.log('already decrementing')
     } else {
-      if(this.state.count <= 0 && this.state.breakCount > 0) {
+      if(this.state.count <= 0 && this.state.breakCount > 0) { 
         clearInterval(this.interval)
         this.startBreakCounter()
       }
@@ -45,7 +45,8 @@ class Count extends React.Component {
     }
   }
 
-  resetCounter () {
+  //stop decrement and reset state seconds
+  resetCounter () { 
     this.stopCounter()
     this.setState({ 
       count: MAX_SECONDS,
@@ -56,7 +57,7 @@ class Count extends React.Component {
 
   stopCounter () {
     if(this.interval){
-      clearInterval(this.interval)
+      clearInterval(this.interval) //clear active timer interval
       this.setState({isCountingDown: false, status: 'idle'})
     } else {
       console.log('no interval to clear')
@@ -64,11 +65,11 @@ class Count extends React.Component {
   }
 
   decrementCount () {
-    this.setState(prevState => ({count: prevState.count - 1}))
+    this.setState(prevState => ({count: prevState.count - 1})) //decrement count by 1
     if(this.state.count === 0) {
-      //Vibration.vibrate(DURATION)
       this.stopCounter()
       this.startBreakCounter()
+      Vibration.vibrate(DURATION) //vibrate
     }
   }
 
@@ -76,7 +77,7 @@ class Count extends React.Component {
     if(this.state.isCountingDown) { 
       console.log('already decrementing')
     } else {
-      this.interval = setInterval(this.decrementBreakCount, 1000)
+      this.interval = setInterval(this.decrementBreakCount, 1000) //decrement every second
       this.setState({isCountingDown: true, status: 'resting'}) 
     }
     if(this.state.breakCount <= 0) {
@@ -85,22 +86,22 @@ class Count extends React.Component {
   }
 
   decrementBreakCount() {
-    this.setState(prevState => ({breakCount: prevState.breakCount -1}))
-    if(this.state.breakCount === 0) {
-      //Vibration.vibrate(DURATION)
-      this.stopCounter()
+    this.setState(prevState => ({breakCount: prevState.breakCount -1})) //decrement breakcount by 1
+    if(this.state.breakCount === 0) { 
+      this.stopCounter() 
+      Vibration.vibrate(DURATION) //vibrate
     }
   }
 
   // anything in RENDER happens everytime render is called which is EVERY time setState() is called
   // Math.floor(this.state.count / 60) is a computation that needs to happen every second. 
-  // set state is being called every second for us.
   render() {
     let minutes = Math.floor(this.state.count / 60)
     let seconds = this.state.count % 60
     let restMinutes = Math.floor(this.state.breakCount / 60)
     let restSeconds = this.state.breakCount % 60
 
+    //switch between work/rest depending on which timer is running
     const statusMessage = () => { 
       if(this.state.status === 'working') { 
         return 'Working time!' 
@@ -134,6 +135,8 @@ class Count extends React.Component {
     )
   }
 }
+
+//styles
 
 const styles = StyleSheet.create({
   container: {
