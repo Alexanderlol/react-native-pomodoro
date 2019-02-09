@@ -1,5 +1,6 @@
 import React from 'react'
-import {StyleSheet, Text, Button, View, TouchableHighlight, Vibration} from 'react-native'
+import {StyleSheet, Text, Button, View, TouchableHighlight} from 'react-native'
+import {vibrate} from './utils'
 
 const MAX_SECONDS = 1500 //25min
 const REST_SECONDS = 300 //5min
@@ -69,7 +70,7 @@ class Count extends React.Component {
     if(this.state.count === 0) {
       this.stopCounter()
       this.startBreakCounter()
-      Vibration.vibrate(DURATION) //vibrate
+      vibrate()
     }
   }
 
@@ -89,12 +90,10 @@ class Count extends React.Component {
     this.setState(prevState => ({breakCount: prevState.breakCount -1})) //decrement breakcount by 1
     if(this.state.breakCount === 0) { 
       this.stopCounter() 
-      Vibration.vibrate(DURATION) //vibrate
+      vibrate()
     }
   }
-
-  // anything in RENDER happens everytime render is called which is EVERY time setState() is called
-  // Math.floor(this.state.count / 60) is a computation that needs to happen every second. 
+  
   render() {
     let minutes = Math.floor(this.state.count / 60)
     let seconds = this.state.count % 60
